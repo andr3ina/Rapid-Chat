@@ -19,10 +19,8 @@ var pusher = new Pusher({
 app.post('/pusher/auth', function(req, res) {
   var socketId = req.body.socket_id;
   var channel = req.body.channel_name;
-  const presenceData = {
-    user_id: "unique_user_id",
-    user_info: { name: "Mr Channels", twitter_id: "@pusher" },
-  };
+  const user_id = req.cookies.user_id;
+  const presenceData = { user_id };
   var auth = pusher.authenticate(socketId, channel, presenceData);
   res.send(auth);
 });

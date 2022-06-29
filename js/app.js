@@ -83,16 +83,7 @@
     
   })
 
-  function addMemberToUserList(memberId) {
-
-
-    userEl = document.createElement("div");
-    userEl.id = memberId;
-    userEl.innerText = memberId;
-    document.getElementById("user_list").appendChild(userEl);
-
-    console.log = memberId.name;
-  }
+ 
 
   // a unique random key generator
   function getUniqueId () {
