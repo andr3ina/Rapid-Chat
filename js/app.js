@@ -6,6 +6,10 @@
   doc.contentEditable = true;
   doc.focus();
 
+  var doc2 = document.getElementById('doc2');
+  doc2.contentEditable = true;
+  doc2.focus();
+
   // if this is a new doc, generate a unique identifier
   // append it as a query param
   var id = getUrlParameter('id');
@@ -17,31 +21,94 @@
 
   return new Promise(function (resolve, reject) {
     // subscribe to the changes via Pusher
-    var pusher = new Pusher(<INSERT_PUSHER_APP_KEY_HERE>);
+    var pusher = new Pusher('6780742e5e8b3e07326f', { cluster: 'us2' });
     var channel = pusher.subscribe(id);
+    var presenceChannel = pusher.subscribe("presence-quickstart");
+
+
+
+    presenceChannel.bind("pusher:subscription_succeeded", () =>
+      presenceChannel.members.each((member) => addMemberToUserList(member.id))
+    );
+    presenceChannel.bind("pusher:member_added", (member) =>
+      addMemberToUserList(member.id)
+    );
+    presenceChannel.bind("pusher:member_removed", (member) => {
+      const userEl = document.getElementById(member.id);
+      userEl.parentNode.removeChild(userEl);
+    });
+
+  
+
+
     channel.bind('client-text-edit', function(html) {
       // save the current position
+     
       var currentCursorPosition = getCaretCharacterOffsetWithin(doc);
       doc.innerHTML = html;
       // set the previous cursor position
       setCaretPosition(doc, currentCursorPosition);
+      
+    
+    });
+    channel.bind('pusher:subscription_succeeded', function() {
+      resolve(channel);
+    });
+    channel.bind('client-text-edit2', function(html) {
+      // save the current position
+      
+      var currentCursorPosition2 = getCaretCharacterOffsetWithin(doc2);
+      doc2.innerHTML = html;
+      // set the previous cursor position
+      setCaretPosition(doc2, currentCursorPosition2);
+      
     });
     channel.bind('pusher:subscription_succeeded', function() {
       resolve(channel);
     });
   }).then(function (channel) {
     function triggerChange (e) {
-      channel.trigger('client-text-edit', e.target.innerHTML);
+      if(e.target.id == 'doc'){
+        channel.trigger('client-text-edit', doc.innerHTML);
+
+
+      }else{
+      channel.trigger('client-text-edit2', doc2.innerHTML);
+      }
     }
 
     doc.addEventListener('input', triggerChange);
+    doc2.addEventListener('input', triggerChange);
+
+    
   })
+
+  function addMemberToUserList(memberId) {
+
+
+    userEl = document.createElement("div");
+    userEl.id = memberId;
+    userEl.innerText = memberId;
+    document.getElementById("user_list").appendChild(userEl);
+
+    console.log = memberId.name;
+  }
 
   // a unique random key generator
   function getUniqueId () {
     return 'private-' + Math.random().toString(36).substr(2, 9);
   }
 
+  function addMemberToUserList(memberId) {
+
+
+    userEl = document.createElement("div");
+    userEl.id = memberId;
+    userEl.innerText = memberId;
+    document.getElementById("user_list").appendChild(userEl);
+
+    console.log = memberId.name;
+  }
   // function to get a query param's value
   function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');

@@ -10,17 +10,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('./'));
 
 var pusher = new Pusher({
-  appId: 'INSERT_YOUR_APP_ID_HERE',
-  key: 'INSERT_YOUR_KEY_HERE',
-  secret:  'INSERT_YOUR_SECRET_HERE' 
+  appId: '576320',
+  key: '6780742e5e8b3e07326f',
+  secret:  'e207bb5c71bf789028d6' 
 });
+
 
 app.post('/pusher/auth', function(req, res) {
   var socketId = req.body.socket_id;
   var channel = req.body.channel_name;
-  var auth = pusher.authenticate(socketId, channel);
+  const presenceData = {
+    user_id: "unique_user_id",
+    user_info: { name: "Mr Channels", twitter_id: "@pusher" },
+  };
+  var auth = pusher.authenticate(socketId, channel, presenceData);
   res.send(auth);
 });
 
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 3000;
 app.listen(port, () => console.log('Listening at http://localhost:5000'));

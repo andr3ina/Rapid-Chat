@@ -4,17 +4,26 @@
   "description": "An awesome collab-edit",
   "main": "server.js",
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
     "pusher": "^1.5.1"
   },
   "devDependencies": {
-    "express": "^4.15.2"
+    "express": "^4.18.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "author": "Ankeet Maini",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankeetmaini/collaborative-text-editor.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/ankeetmaini/collaborative-text-editor/issues"
+  },
+  "homepage": "https://github.com/ankeetmaini/collaborative-text-editor#readme"
 }
