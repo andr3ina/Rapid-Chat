@@ -23,7 +23,7 @@
     // subscribe to the changes via Pusher
     var pusher = new Pusher('6780742e5e8b3e07326f', { cluster: 'us2' });
     var channel = pusher.subscribe(id);
-    var presenceChannel = pusher.subscribe("presence-quickstart");
+    var presenceChannel = pusher.subscribe("presence-quickstart" + id);
 
 
 
@@ -99,16 +99,7 @@
     return 'private-' + Math.random().toString(36).substr(2, 9);
   }
 
-  function addMemberToUserList(memberId) {
 
-
-    userEl = document.createElement("div");
-    userEl.id = memberId;
-    userEl.innerText = memberId;
-    document.getElementById("user_list").appendChild(userEl);
-
-    console.log = memberId.name;
-  }
   // function to get a query param's value
   function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
