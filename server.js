@@ -18,7 +18,10 @@ var pusher = new Pusher({
 app.post("/pusher/auth", function (req, res) {
   var socketId = req.body.socket_id;
   var channel = req.body.channel_name;
+<<<<<<< HEAD
 
+=======
+>>>>>>> a1fbca585a3e3759c31d41e23683bf58189da557
   /*
   const presenceData = {
     user_id: "unique_user_id",

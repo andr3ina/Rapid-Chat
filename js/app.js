@@ -2,29 +2,29 @@
 // and gets executed immediately!
 (function () {
   // make doc editable and focus
-  var doc = document.getElementById('doc');
+  var doc = document.getElementById("doc");
   doc.contentEditable = true;
   doc.focus();
 
-  var doc2 = document.getElementById('doc2');
+  var doc2 = document.getElementById("doc2");
   doc2.contentEditable = true;
   doc2.focus();
 
   // if this is a new doc, generate a unique identifier
   // append it as a query param
-  var id = getUrlParameter('id');
+  var id = getUrlParameter("id");
   if (!id) {
     location.search = location.search
-      ? '&id=' + getUniqueId() : 'id=' + getUniqueId();
+      ? "&id=" + getUniqueId()
+      : "id=" + getUniqueId();
     return;
   }
 
   return new Promise(function (resolve, reject) {
     // subscribe to the changes via Pusher
-    var pusher = new Pusher('6780742e5e8b3e07326f', { cluster: 'us2' });
+    var pusher = new Pusher("6780742e5e8b3e07326f", { cluster: "us2" });
     var channel = pusher.subscribe(id);
     var presenceChannel = pusher.subscribe("presence-quickstart" + id);
-
 
     function addMemberToUserList(memberId) {
       userEl = document.createElement("div");
@@ -34,7 +34,7 @@
         "hsl(" + (hashCode(memberId) % 360) + ",70%,60%)";
       document.getElementById("user_list").appendChild(userEl);
     }
-    
+
     presenceChannel.bind("pusher:subscription_succeeded", () =>
       presenceChannel.members.each((member) => addMemberToUserList(member.id))
     );
@@ -46,65 +46,54 @@
       userEl.parentNode.removeChild(userEl);
     });
 
-  
-
-
-    channel.bind('client-text-edit', function(html) {
+    channel.bind("client-text-edit", function (html) {
       // save the current position
-     
+
       var currentCursorPosition = getCaretCharacterOffsetWithin(doc);
       doc.innerHTML = html;
       // set the previous cursor position
       setCaretPosition(doc, currentCursorPosition);
-      
-    
     });
-    channel.bind('pusher:subscription_succeeded', function() {
+    channel.bind("pusher:subscription_succeeded", function () {
       resolve(channel);
     });
-    channel.bind('client-text-edit2', function(html) {
+    channel.bind("client-text-edit2", function (html) {
       // save the current position
-      
+
       var currentCursorPosition2 = getCaretCharacterOffsetWithin(doc2);
       doc2.innerHTML = html;
       // set the previous cursor position
       setCaretPosition(doc2, currentCursorPosition2);
-      
     });
-    channel.bind('pusher:subscription_succeeded', function() {
+    channel.bind("pusher:subscription_succeeded", function () {
       resolve(channel);
     });
   }).then(function (channel) {
-    function triggerChange (e) {
-      if(e.target.id == 'doc'){
-        channel.trigger('client-text-edit', doc.innerHTML);
-
-
-      }else{
-      channel.trigger('client-text-edit2', doc2.innerHTML);
+    function triggerChange(e) {
+      if (e.target.id == "doc") {
+        channel.trigger("client-text-edit", doc.innerHTML);
+      } else {
+        channel.trigger("client-text-edit2", doc2.innerHTML);
       }
     }
 
-    doc.addEventListener('input', triggerChange);
-    doc2.addEventListener('input', triggerChange);
-
-    
-  })
-
- 
+    doc.addEventListener("input", triggerChange);
+    doc2.addEventListener("input", triggerChange);
+  });
 
   // a unique random key generator
-  function getUniqueId () {
-    return 'private-' + Math.random().toString(36).substr(2, 9);
+  function getUniqueId() {
+    return "private-" + Math.random().toString(36).substr(2, 9);
   }
-
 
   // function to get a query param's value
   function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
     var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results === null
+      ? ""
+      : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
 
   function getCaretCharacterOffsetWithin(element) {
@@ -121,7 +110,7 @@
         preCaretRange.setEnd(range.endContainer, range.endOffset);
         caretOffset = preCaretRange.toString().length;
       }
-    } else if ( (sel = doc.selection) && sel.type != "Control") {
+    } else if ((sel = doc.selection) && sel.type != "Control") {
       var textRange = sel.createRange();
       var preCaretTextRange = doc.body.createTextRange();
       preCaretTextRange.moveToElementText(element);
@@ -134,23 +123,24 @@
   function setCaretPosition(el, pos) {
     // Loop through all child nodes
     for (var node of el.childNodes) {
-      if (node.nodeType == 3) { // we have a text node
+      if (node.nodeType == 3) {
+        // we have a text node
         if (node.length >= pos) {
-            // finally add our range
-            var range = document.createRange(),
-                sel = window.getSelection();
-            range.setStart(node,pos);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
-            return -1; // we are done
+          // finally add our range
+          var range = document.createRange(),
+            sel = window.getSelection();
+          range.setStart(node, pos);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+          return -1; // we are done
         } else {
           pos -= node.length;
         }
       } else {
-        pos = setCaretPosition(node,pos);
+        pos = setCaretPosition(node, pos);
         if (pos == -1) {
-            return -1; // no need to finish the for loop
+          return -1; // no need to finish the for loop
         }
       }
     }
